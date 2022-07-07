@@ -1,0 +1,8 @@
+# Changes here will be overwritten by Copier
+_commit: v2.1.2
+_src_path: gh:eccenca/cmem-plugin-template
+author_mail: thomas.wilmering@eccenca.com
+author_name: Thomas Wilmering
+project_description: eccenca Corporate Memory Workflow plugin for parameter input
+project_slug: parameters
+
