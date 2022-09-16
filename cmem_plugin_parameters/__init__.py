@@ -6,19 +6,26 @@ from cmem_plugin_base.dataintegration.description import Plugin, PluginParameter
 from cmem_plugin_base.dataintegration.entity import (
     Entities, Entity, EntitySchema, EntityPath,
 )
+from cmem_plugin_base.dataintegration.parameter.multiline import MultilineStringParameterType
 from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
+
+DESCRIPTION = """Connect this task to a config port of another task in order to set
+or overwrite the parameter values of this task."""
+
+DOCUMENTATION = f"""{DESCRIPTION}"""
 
 
 @Plugin(
-    label="Parameter Settings",
-    description="Generates parameters and parameter settings.",
-    documentation="""TBD""",
+    label="Set or overwrite parameter values",
+    plugin_id="cmem_plugin_parameters-ParametersPlugin",
+    description=DESCRIPTION,
+    documentation=DOCUMENTATION,
     parameters=[
         PluginParameter(
             name="parameters",
-            label="Parameter settings",
-            description="Enter parameters and values in the form:"
-                        " parameter[1],value[1];...;parameter[n],value[n]"
+            label="Parameter Configuration",
+            param_type=MultilineStringParameterType(),
+            description="TBD"
         )
     ]
 )
