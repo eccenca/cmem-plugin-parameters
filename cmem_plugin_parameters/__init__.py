@@ -1,4 +1,4 @@
-"""Simple entities generation plugin to configure tasks in workflows."""
+"""Entities generation plugin to configure tasks in workflows."""
 from typing import Sequence
 
 from cmem_plugin_base.dataintegration.context import ExecutionContext
@@ -15,7 +15,7 @@ from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
     documentation="""TBD""",
     parameters=[
         PluginParameter(
-            name="parameter_settings",
+            name="parameters",
             label="Parameter settings",
             description="Enter parameters and values in the form:"
                         " parameter[1],value[1];...;parameter[n],value[n]"
@@ -23,23 +23,28 @@ from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
     ]
 )
 class ParametersPlugin(WorkflowPlugin):
+    """Entities generation plugin to configure tasks in workflows."""
 
     def __init__(
             self,
-            parameter_settings
+            parameters
     ) -> None:
-        self.parameter_settings = parameter_settings
+        self.parameter_settings = parameters
 
     def execute(self, inputs: Sequence[Entities],
                 context: ExecutionContext) -> Entities:
         values = []
         paths = []
-        for n in self.parameter_settings.split(";"):
-            p, v = n.split(",")
-            self.log.info(f"Parameter {p.strip()}: {v.strip()}")
-            paths.append(EntityPath(path=p.strip()))
-            values.append([v.strip()])
-        entities = [Entity(uri="urn:Parameter", values=values)]
+        for parameter in self.parameter_settings.split(";"):
+            key, value = parameter.split(",")
+            key = key.strip()
+            value = value.strip()
+            self.log.info(f"Parameter {key}: {value}")
+            paths.append(EntityPath(path=key))
+            values.append([value])
+        entities = [
+            Entity(uri="urn:Parameter", values=values)
+        ]
         return Entities(
             entities=entities,
             schema=EntitySchema(
