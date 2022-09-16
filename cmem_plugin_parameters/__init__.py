@@ -1,3 +1,6 @@
+from typing import Sequence
+
+from cmem_plugin_base.dataintegration.context import ExecutionContext
 from cmem_plugin_base.dataintegration.description import Plugin, PluginParameter
 from cmem_plugin_base.dataintegration.entity import (
     Entities, Entity, EntitySchema, EntityPath,
@@ -13,12 +16,11 @@ from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
         PluginParameter(
             name="parameter_settings",
             label="Parameter settings",
-            description="Enter parameters and values in the form: parameter[1],value[1];...;parameter[n],value[n]"
+            description="Enter parameters and values in the form:"
+                        " parameter[1],value[1];...;parameter[n],value[n]"
         )
     ]
 )
-
-
 class ParametersPlugin(WorkflowPlugin):
 
     def __init__(
@@ -27,7 +29,8 @@ class ParametersPlugin(WorkflowPlugin):
     ) -> None:
         self.parameter_settings = parameter_settings
 
-    def execute(self, inputs=()) -> Entities:
+    def execute(self, inputs: Sequence[Entities],
+                context: ExecutionContext) -> Entities:
         values = []
         paths = []
         for n in self.parameter_settings.split(";"):
@@ -36,4 +39,10 @@ class ParametersPlugin(WorkflowPlugin):
             paths.append(EntityPath(path=p.strip()))
             values.append([v.strip()])
         entities = [Entity(uri="urn:Parameter", values=values)]
-        return Entities(entities=entities, schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths))
+        return Entities(
+            entities=entities,
+            schema=EntitySchema(
+                type_uri="urn:ParameterSettings",
+                paths=paths
+            )
+        )
