@@ -1,3 +1,4 @@
+"""Simple entities generation plugin to configure tasks in workflows."""
 from typing import Sequence
 
 from cmem_plugin_base.dataintegration.context import ExecutionContext
