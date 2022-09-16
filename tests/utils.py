@@ -4,18 +4,12 @@ from typing import Optional
 
 import pytest
 import requests
-
-
 # check for cmem environment and skip if not present
 from cmem.cmempy.api import get_token
-
-from cmem_plugin_base.dataintegration.context import (
-    PluginContext,
-    UserContext,
-    TaskContext,
-    ExecutionContext,
-    ReportContext,
-)
+from cmem_plugin_base.dataintegration.context import (ExecutionContext,
+                                                      PluginContext,
+                                                      ReportContext,
+                                                      TaskContext, UserContext)
 
 needs_cmem = pytest.mark.skipif(
     os.environ.get("CMEM_BASE_URI", "") == "", reason="Needs CMEM configuration"
