@@ -9,11 +9,32 @@ from cmem_plugin_base.dataintegration.entity import (Entities, Entity,
 from cmem_plugin_base.dataintegration.parameter.multiline import \
     MultilineStringParameterType
 from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
+from yaml import safe_load, YAMLError
 
 DESCRIPTION = """Connect this task to a config port of another task in order to set
 or overwrite the parameter values of this task."""
 
 DOCUMENTATION = f"""{DESCRIPTION}"""
+
+
+def yaml_to_entities(yaml_string: str):
+    """Generate entities from the yaml string."""
+    parameters = safe_load(yaml_string)
+    if not isinstance(parameters, dict):
+        raise ValueError(
+            "We need at least one line 'key: value' here."
+        )
+    values = []
+    paths = []
+    for key, value in parameters.items():
+        if type(value) in (str, int, float, bool):
+            paths.append(EntityPath(path=key))
+            values.append([value])
+    entities = [Entity(uri="urn:Parameter", values=values)]
+    return Entities(
+        entities=entities,
+        schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths),
+    )
 
 
 @Plugin(
@@ -34,22 +55,14 @@ class ParametersPlugin(WorkflowPlugin):
     """Entities generation plugin to configure tasks in workflows."""
 
     def __init__(self, parameters) -> None:
-        self.parameter_settings = parameters
+        try:
+            self.entities = yaml_to_entities(parameters)
+        except YAMLError as error:
+            raise ValueError(
+                f"Error in parameter input: {str(error)}"
+            ) from error
 
     def execute(
         self, inputs: Sequence[Entities], context: ExecutionContext
     ) -> Entities:
-        values = []
-        paths = []
-        for parameter in self.parameter_settings.split(";"):
-            key, value = parameter.split(",")
-            key = key.strip()
-            value = value.strip()
-            self.log.info(f"Parameter {key}: {value}")
-            paths.append(EntityPath(path=key))
-            values.append([value])
-        entities = [Entity(uri="urn:Parameter", values=values)]
-        return Entities(
-            entities=entities,
-            schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths),
-        )
+        return self.entities
