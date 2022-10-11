@@ -14,7 +14,31 @@ from yaml import safe_load, YAMLError
 DESCRIPTION = """Connect this task to a config port of another task in order to set
 or overwrite the parameter values of this task."""
 
-DOCUMENTATION = f"""{DESCRIPTION}"""
+DOCUMENTATION = f"""{DESCRIPTION}
+
+To configure this task, add one `key: value` pair per line to the Parameter
+Configuration multiline field (YAML syntax). `key` is the ID of the parameter
+you want to set or update, `value` is the new value to set.
+
+You can also use multiline values with `|`
+(be aware of the correct indentation with spaces, not tabs).
+
+Example parameter configuration:
+
+```
+url: http://example.org
+method: GET
+query: |
+    SELECT ?s
+    WHERE {{
+      ?s ?p ?o
+    }}
+```
+"""
+
+DESC_PARAMETERS = """Your parameter configuration in YAML Syntax.
+One 'parameter: value' pair per line.
+See the plugin description for a multiline example."""
 
 
 def yaml_to_entities(yaml_string: str):
@@ -47,7 +71,7 @@ def yaml_to_entities(yaml_string: str):
             name="parameters",
             label="Parameter Configuration",
             param_type=MultilineStringParameterType(),
-            description="TBD",
+            description=DESC_PARAMETERS,
         )
     ],
 )
