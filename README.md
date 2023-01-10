@@ -1,8 +1,10 @@
-# # parameters CMEM Workflow Plugin
+# cmem-plugin-parameters
 
-An eccenca Corporate Memory (CMEM) plugin to set parameters on a Task input.
+eccenca Corporate Memory Workflow plugin for parameter input
 
-Parameters can be set in the plugin configuration window in the form:
+## Development
 
-parameter1,value1;parameter2,value2;...;parameterN,valueN
+- Run [task](https://taskfile.dev/) to see all major development tasks.
+- Use [pre-commit](https://pre-commit.com/) to avoid errors before commit.
+- This repository was created with [this copier template](https://github.com/eccenca/cmem-plugin-template).
 

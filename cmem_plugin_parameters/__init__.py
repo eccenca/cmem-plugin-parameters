@@ -62,7 +62,7 @@ def yaml_to_entities(yaml_string: str):
 
 
 @Plugin(
-    label="Set or overwrite parameter values",
+    label="Set or Overwrite parameter values",
     plugin_id="cmem_plugin_parameters-ParametersPlugin",
     description=DESCRIPTION,
     documentation=DOCUMENTATION,

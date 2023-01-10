@@ -47,16 +47,16 @@ def test_execution_with_errors():
     """Test plugin execution"""
     context = TestExecutionContext()
 
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         ParametersPlugin(parameters="one").execute((), context)
 
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         ParametersPlugin(parameters="").execute((), context)
 
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         ParametersPlugin(parameters="not,correct,parameter;key").execute((), context)
 
-    with pytest.raises(ValueError) as e_info:
+    with pytest.raises(ValueError):
         ParametersPlugin(parameters="""
 key: value1
 xxx
