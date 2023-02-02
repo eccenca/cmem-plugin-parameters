@@ -53,7 +53,7 @@ def yaml_to_entities(yaml_string: str):
     for key, value in parameters.items():
         if type(value) in (str, int, float, bool):
             paths.append(EntityPath(path=key))
-            values.append([value])
+            values.append([str(value)])
     entities = [Entity(uri="urn:Parameter", values=values)]
     return Entities(
         entities=entities,
