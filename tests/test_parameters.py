@@ -12,11 +12,13 @@ def test_execution():
 
     ParametersPlugin(parameters="key1: value").execute((), context)
 
-    entities = ParametersPlugin(parameters="""key: value
-x: y""").execute((), context)
+    entities = ParametersPlugin(
+        parameters="""key: value
+x: y"""
+    ).execute((), context)
     assert len(entities.schema.paths) == 2
     assert len(entities.entities) == 1
-    assert entities.entities[0].uri == 'urn:Parameter'
+    assert entities.entities[0].uri == "urn:Parameter"
     assert len(entities.entities[0].values) == 2
     parameters = """
 p2: value2
@@ -38,9 +40,9 @@ p3: test
     entities = ParametersPlugin(parameters=parameters).execute((), context)
     assert len(entities.schema.paths) == 4
     assert len(entities.entities) == 1
-    assert entities.entities[0].uri == 'urn:Parameter'
+    assert entities.entities[0].uri == "urn:Parameter"
     assert len(entities.entities[0].values) == 4
-    assert entities.entities[0].values[0][0] == 'value3'
+    assert entities.entities[0].values[0][0] == "value3"
 
 
 def test_execution_with_errors():
@@ -57,7 +59,9 @@ def test_execution_with_errors():
         ParametersPlugin(parameters="not,correct,parameter;key").execute((), context)
 
     with pytest.raises(ValueError):
-        ParametersPlugin(parameters="""
+        ParametersPlugin(
+            parameters="""
 key: value1
 xxx
-""").execute((), context)
+"""
+        ).execute((), context)

@@ -2,12 +2,16 @@
 from typing import Sequence
 
 from cmem_plugin_base.dataintegration.context import ExecutionContext
-from cmem_plugin_base.dataintegration.description import (Plugin,
-                                                          PluginParameter)
-from cmem_plugin_base.dataintegration.entity import (Entities, Entity,
-                                                     EntityPath, EntitySchema)
-from cmem_plugin_base.dataintegration.parameter.multiline import \
-    MultilineStringParameterType
+from cmem_plugin_base.dataintegration.description import Plugin, PluginParameter
+from cmem_plugin_base.dataintegration.entity import (
+    Entities,
+    Entity,
+    EntityPath,
+    EntitySchema,
+)
+from cmem_plugin_base.dataintegration.parameter.multiline import (
+    MultilineStringParameterType,
+)
 from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
 from yaml import safe_load, YAMLError
 
@@ -53,9 +57,7 @@ def yaml_to_entities(yaml_string: str):
     """Generate entities from the yaml string."""
     parameters = safe_load(yaml_string)
     if not isinstance(parameters, dict):
-        raise ValueError(
-            "We need at least one line 'key: value' here."
-        )
+        raise ValueError("We need at least one line 'key: value' here.")
     values = []
     paths = []
     for key, value in parameters.items():
@@ -90,9 +92,7 @@ class ParametersPlugin(WorkflowPlugin):
         try:
             self.entities = yaml_to_entities(parameters)
         except YAMLError as error:
-            raise ValueError(
-                f"Error in parameter input: {str(error)}"
-            ) from error
+            raise ValueError(f"Error in parameter input: {str(error)}") from error
 
     def execute(
         self, inputs: Sequence[Entities], context: ExecutionContext
