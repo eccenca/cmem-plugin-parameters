@@ -14,6 +14,20 @@ from yaml import safe_load, YAMLError
 DESCRIPTION = """Connect this task to a config port of another task in order to set
 or overwrite the parameter values of this task."""
 
+YAML_EXAMPLE = """
+```
+url: http://example.org
+method: GET
+query: |
+    SELECT ?s
+    WHERE {{
+      ?s ?p ?o
+    }}
+execute_once: True
+limit: 5
+```
+"""
+
 DOCUMENTATION = f"""{DESCRIPTION}
 
 To configure this task, add one `key: value` pair per line to the Parameter
@@ -25,20 +39,14 @@ You can also use multiline values with `|`
 
 Example parameter configuration:
 
-```
-url: http://example.org
-method: GET
-query: |
-    SELECT ?s
-    WHERE {{
-      ?s ?p ?o
-    }}
-```
+{YAML_EXAMPLE}
 """
 
-DESC_PARAMETERS = """Your parameter configuration in YAML Syntax.
+DESC_PARAMETERS = f"""Your parameter configuration in YAML Syntax.
 One 'parameter: value' pair per line.
-See the plugin description for a multiline example."""
+
+{YAML_EXAMPLE}
+"""
 
 
 def yaml_to_entities(yaml_string: str):
