@@ -1,7 +1,10 @@
 """Entities generation plugin to configure tasks in workflows."""
 from typing import Sequence
 
-from cmem_plugin_base.dataintegration.context import ExecutionContext
+from cmem_plugin_base.dataintegration.context import (
+    ExecutionContext,
+    ExecutionReport,
+)
 from cmem_plugin_base.dataintegration.description import Plugin, PluginParameter
 from cmem_plugin_base.dataintegration.entity import (
     Entities,
@@ -58,16 +61,21 @@ def yaml_to_entities(yaml_string: str):
     parameters = safe_load(yaml_string)
     if not isinstance(parameters, dict):
         raise ValueError("We need at least one line 'key: value' here.")
+    value_counter = 0
     values = []
     paths = []
     for key, value in parameters.items():
         if type(value) in (str, int, float, bool):
             paths.append(EntityPath(path=key))
             values.append([str(value)])
+            value_counter += 1
     entities = [Entity(uri="urn:Parameter", values=values)]
-    return Entities(
-        entities=entities,
-        schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths),
+    return (
+        Entities(
+            entities=entities,
+            schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths),
+        ),
+        value_counter,
     )
 
 
@@ -88,13 +96,21 @@ def yaml_to_entities(yaml_string: str):
 class ParametersPlugin(WorkflowPlugin):
     """Entities generation plugin to configure tasks in workflows."""
 
-    def __init__(self, parameters) -> None:
+    def __init__(self, parameters: str) -> None:
         try:
-            self.entities = yaml_to_entities(parameters)
+            self.entities, self.total_params = yaml_to_entities(parameters)
         except YAMLError as error:
             raise ValueError(f"Error in parameter input: {str(error)}") from error
 
     def execute(
         self, inputs: Sequence[Entities], context: ExecutionContext
     ) -> Entities:
+
+        context.report.update(
+            ExecutionReport(
+                entity_count=self.total_params,
+                operation="write",
+                operation_desc="parameters",
+            )
+        )
         return self.entities
