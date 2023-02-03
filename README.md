@@ -1,6 +1,6 @@
 # cmem-plugin-parameters
 
-eccenca Corporate Memory Workflow plugin for parameter input
+eccenca Corporate Memory Workflow Plugin Sets or Overwrites Task Parameters
 
 ## Development
 

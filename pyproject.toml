@@ -2,8 +2,8 @@
 name = "cmem-plugin-parameters"
 version = "0.0.0"
 license = "Apache-2.0"
-description = "eccenca Corporate Memory Workflow plugin for parameter input"
-authors = ["Thomas Wilmering <thomas.wilmering@eccenca.com>"]
+description = "Set or Overwrite parameters of a task"
+authors = ["eccenca GmbH <cmempy-developer@eccenca.com>"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Plugins",
@@ -11,8 +11,9 @@ classifiers = [
 ]
 readme = "README-public.md"
 keywords = [
-    "eccenca Corporate Memory", "plugin"
+    "eccenca Corporate Memory", "plugin", "yaml", "parameters"
 ]
+homepage = "https://github.com/eccenca/cmem-plugin-parameters"
 
 [tool.poetry.dependencies]
 python = "^3.9"
