@@ -2,7 +2,7 @@
 name = "cmem-plugin-parameters"
 version = "0.0.0"
 license = "Apache-2.0"
-description = "Set or Overwrite parameters of a task"
+description = "Set or overwrite parameters of a task."
 authors = ["eccenca GmbH <cmempy-developer@eccenca.com>"]
 classifiers = [
     "Development Status :: 4 - Beta",
