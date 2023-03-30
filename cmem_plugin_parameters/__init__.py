@@ -69,6 +69,12 @@ def yaml_to_entities(yaml_string: str):
             paths.append(EntityPath(path=key))
             values.append([str(value)])
             value_counter += 1
+        elif isinstance(value, list):
+            value_list = process_value_list(value)
+            if value_list:
+                paths.append(EntityPath(path=key))
+                values.append(process_value_list(value))
+                value_counter += 1
     entities = [Entity(uri="urn:Parameter", values=values)]
     return (
         Entities(
@@ -77,6 +83,12 @@ def yaml_to_entities(yaml_string: str):
         ),
         value_counter,
     )
+
+
+def process_value_list(input_list):
+    """Convert list to list of strings"""
+    val_list = [str(val) for val in input_list if type(val) in (str, int, float, bool)]
+    return val_list
 
 
 @Plugin(
