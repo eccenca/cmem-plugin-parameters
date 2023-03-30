@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- support lists of values
+- support abbreviated lists of values
 
 ### Changed
 
