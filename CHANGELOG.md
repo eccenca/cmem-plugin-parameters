@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
-### Added
+### Fixed
 
-- support abbreviated lists of values
+- support lists of values
 
 ### Changed
 
