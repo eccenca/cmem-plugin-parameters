@@ -105,7 +105,6 @@ class ParametersPlugin(WorkflowPlugin):
     def execute(
         self, inputs: Sequence[Entities], context: ExecutionContext
     ) -> Entities:
-
         context.report.update(
             ExecutionReport(
                 entity_count=self.total_params,
