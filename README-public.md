@@ -1,6 +1,6 @@
 # cmem-plugin-parameters
 
-eccenca Corporate Memory Workflow plugin for parameter input
+Set or overwrite parameters of a task.
 
 This is a plugin for [eccenca](https://eccenca.com) [Corporate Memory](https://documentation.eccenca.com).
 
