@@ -5,25 +5,29 @@ from cmem_plugin_base.dataintegration.context import (
     ExecutionContext,
     ExecutionReport,
 )
-from cmem_plugin_base.dataintegration.description import Plugin, PluginParameter
+from cmem_plugin_base.dataintegration.description import (
+    Plugin,
+    PluginParameter,
+    Icon
+)
 from cmem_plugin_base.dataintegration.entity import (
     Entities,
     Entity,
     EntityPath,
     EntitySchema,
 )
-from cmem_plugin_base.dataintegration.parameter.multiline import (
-    MultilineStringParameterType,
-)
+from cmem_plugin_base.dataintegration.parameter.code import YamlCode
 from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
+from cmem_plugin_base.dataintegration.ports import (
+    FixedNumberOfInputs,
+    FixedSchemaPort
+)
 from yaml import safe_load, YAMLError
 
 DESCRIPTION = """Connect this task to a config port of another task in order to set
 or overwrite the parameter values of this task."""
 
-YAML_EXAMPLE = """
-```
-url: http://example.org
+YAML_EXAMPLE = """url: http://example.org
 method: GET
 query: |
     SELECT ?s
@@ -32,7 +36,6 @@ query: |
     }}
 execute_once: True
 limit: 5
-```
 """
 
 DOCUMENTATION = f"""{DESCRIPTION}
@@ -46,7 +49,9 @@ You can also use multiline values with `|`
 
 Example parameter configuration:
 
+```
 {YAML_EXAMPLE}
+```
 """
 
 DESC_PARAMETERS = f"""Your parameter configuration in YAML Syntax.
@@ -56,39 +61,16 @@ One 'parameter: value' pair per line.
 """
 
 
-def yaml_to_entities(yaml_string: str):
-    """Generate entities from the yaml string."""
-    parameters = safe_load(yaml_string)
-    if not isinstance(parameters, dict):
-        raise ValueError("We need at least one line 'key: value' here.")
-    value_counter = 0
-    values = []
-    paths = []
-    for key, value in parameters.items():
-        if type(value) in (str, int, float, bool):
-            paths.append(EntityPath(path=key))
-            values.append([str(value)])
-            value_counter += 1
-    entities = [Entity(uri="urn:Parameter", values=values)]
-    return (
-        Entities(
-            entities=entities,
-            schema=EntitySchema(type_uri="urn:ParameterSettings", paths=paths),
-        ),
-        value_counter,
-    )
-
-
 @Plugin(
-    label="Set or Overwrite parameter values",
+    label="Set or Overwrite parameters",
     plugin_id="cmem_plugin_parameters-ParametersPlugin",
+    icon=Icon(file_name="custom.svg", package=__package__),
     description=DESCRIPTION,
     documentation=DOCUMENTATION,
     parameters=[
         PluginParameter(
             name="parameters",
             label="Parameter Configuration",
-            param_type=MultilineStringParameterType(),
             description=DESC_PARAMETERS,
         )
     ],
@@ -96,20 +78,48 @@ def yaml_to_entities(yaml_string: str):
 class ParametersPlugin(WorkflowPlugin):
     """Entities generation plugin to configure tasks in workflows."""
 
-    def __init__(self, parameters: str) -> None:
+    def __init__(self, parameters: YamlCode = YamlCode(YAML_EXAMPLE)) -> None:
         try:
-            self.entities, self.total_params = yaml_to_entities(parameters)
+            self.process_yaml(str(parameters))
         except YAMLError as error:
             raise ValueError(f"Error in parameter input: {str(error)}") from error
+
+        # Input and output ports
+        self.input_ports = FixedNumberOfInputs([])
+        self.output_port = FixedSchemaPort(self.schema)
+
+    def process_yaml(self, yaml_string: str) -> None:
+        """Generate entities from the yaml string."""
+        parameters = safe_load(yaml_string)
+        if not isinstance(parameters, dict):
+            raise ValueError("We need at least one line 'key: value' here.")
+        value_counter = 0
+        values = []
+        paths = []
+        type_uri = "urn:x-eccenca:Parameter"
+        for key, value in parameters.items():
+            if type(value) in (str, int, float, bool):
+                paths.append(EntityPath(path=key))
+                values.append([str(value)])
+                value_counter += 1
+        entities = [Entity(uri=type_uri, values=values)]
+
+        self.schema = EntitySchema(type_uri=type_uri, paths=paths)
+        self.entities = Entities(
+            entities=entities,
+            schema=self.schema
+        )
+        self.total_params = value_counter
 
     def execute(
         self, inputs: Sequence[Entities], context: ExecutionContext
     ) -> Entities:
+
         context.report.update(
             ExecutionReport(
                 entity_count=self.total_params,
                 operation="write",
-                operation_desc="parameters",
+                operation_desc="parameters written",
             )
         )
         return self.entities

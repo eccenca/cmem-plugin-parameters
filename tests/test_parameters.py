@@ -3,9 +3,10 @@ import pytest
 
 from cmem_plugin_parameters import ParametersPlugin
 
-from .utils import TestExecutionContext
+from .utils import TestExecutionContext, needs_cmem
 
 
+@needs_cmem
 def test_execution():
     """Test plugin execution"""
     context = TestExecutionContext()
@@ -18,7 +19,7 @@ x: y"""
     ).execute((), context)
     assert len(entities.schema.paths) == 2
     assert len(entities.entities) == 1
-    assert entities.entities[0].uri == "urn:Parameter"
+    assert entities.entities[0].uri == "urn:x-eccenca:Parameter"
     assert len(entities.entities[0].values) == 2
     parameters = """
 p2: value2
@@ -40,11 +41,12 @@ p3: test
     entities = ParametersPlugin(parameters=parameters).execute((), context)
     assert len(entities.schema.paths) == 4
     assert len(entities.entities) == 1
-    assert entities.entities[0].uri == "urn:Parameter"
+    assert entities.entities[0].uri == "urn:x-eccenca:Parameter"
     assert len(entities.entities[0].values) == 4
     assert entities.entities[0].values[0][0] == "value3"
 
 
+@needs_cmem
 def test_execution_with_errors():
     """Test plugin execution"""
     context = TestExecutionContext()
@@ -65,3 +67,8 @@ key: value1
 xxx
 """
         ).execute((), context)
+
+
+def test_dummy():
+    """pytest raises ZeroDivisionError in case all tests are skipped"""
+    assert 1 == 1
