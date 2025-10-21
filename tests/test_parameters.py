@@ -1,4 +1,5 @@
 """Plugin tests."""
+
 import pytest
 
 from cmem_plugin_parameters import ParametersPlugin
@@ -7,7 +8,7 @@ from .utils import TestExecutionContext, needs_cmem
 
 
 @needs_cmem
-def test_execution():
+def test_execution() -> None:
     """Test plugin execution"""
     context = TestExecutionContext()
 
@@ -17,10 +18,12 @@ def test_execution():
         parameters="""key: value
 x: y"""
     ).execute((), context)
-    assert len(entities.schema.paths) == 2
+    schema_path_length_before = 2
+    value_length_before = 2
+    assert len(entities.schema.paths) == schema_path_length_before
     assert len(entities.entities) == 1
     assert entities.entities[0].uri == "urn:x-eccenca:Parameter"
-    assert len(entities.entities[0].values) == 2
+    assert len(entities.entities[0].values) == value_length_before
     parameters = """
 p2: value2
 top:
@@ -39,28 +42,30 @@ multi: |
 p3: test
     """
     entities = ParametersPlugin(parameters=parameters).execute((), context)
-    assert len(entities.schema.paths) == 4
+    schema_path_length_after = 4
+    value_length_after = 4
+    assert len(entities.schema.paths) == schema_path_length_after
     assert len(entities.entities) == 1
     assert entities.entities[0].uri == "urn:x-eccenca:Parameter"
-    assert len(entities.entities[0].values) == 4
+    assert len(entities.entities[0].values) == value_length_after
     assert entities.entities[0].values[0][0] == "value3"
 
 
 @needs_cmem
-def test_execution_with_errors():
+def test_execution_with_errors() -> None:
     """Test plugin execution"""
     context = TestExecutionContext()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError, match=r"We need at least one line 'key: value' here."):
         ParametersPlugin(parameters="one").execute((), context)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError, match=r"We need at least one line 'key: value' here."):
         ParametersPlugin(parameters="").execute((), context)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError, match=r"We need at least one line 'key: value' here."):
         ParametersPlugin(parameters="not,correct,parameter;key").execute((), context)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"Error in parameter input:"):
         ParametersPlugin(
             parameters="""
 key: value1
@@ -69,6 +74,6 @@ xxx
         ).execute((), context)
 
 
-def test_dummy():
-    """pytest raises ZeroDivisionError in case all tests are skipped"""
-    assert 1 == 1
+def test_dummy() -> None:
+    """Pytest raises ZeroDivisionError in case all tests are skipped"""
+    assert 1 == 1  # noqa: PLR0133
