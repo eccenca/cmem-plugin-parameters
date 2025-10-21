@@ -1,15 +1,12 @@
 """Entities generation plugin to configure tasks in workflows."""
-from typing import Sequence
+
+from collections.abc import Sequence
 
 from cmem_plugin_base.dataintegration.context import (
     ExecutionContext,
     ExecutionReport,
 )
-from cmem_plugin_base.dataintegration.description import (
-    Plugin,
-    PluginParameter,
-    Icon
-)
+from cmem_plugin_base.dataintegration.description import Icon, Plugin, PluginParameter
 from cmem_plugin_base.dataintegration.entity import (
     Entities,
     Entity,
@@ -18,11 +15,8 @@ from cmem_plugin_base.dataintegration.entity import (
 )
 from cmem_plugin_base.dataintegration.parameter.code import YamlCode
 from cmem_plugin_base.dataintegration.plugins import WorkflowPlugin
-from cmem_plugin_base.dataintegration.ports import (
-    FixedNumberOfInputs,
-    FixedSchemaPort
-)
-from yaml import safe_load, YAMLError
+from cmem_plugin_base.dataintegration.ports import FixedNumberOfInputs, FixedSchemaPort
+from yaml import YAMLError, safe_load
 
 DESCRIPTION = """Connect this task to a config port of another task in order to set
 or overwrite the parameter values of this task."""
@@ -78,11 +72,11 @@ One 'parameter: value' pair per line.
 class ParametersPlugin(WorkflowPlugin):
     """Entities generation plugin to configure tasks in workflows."""
 
-    def __init__(self, parameters: YamlCode = YamlCode(YAML_EXAMPLE)) -> None:
+    def __init__(self, parameters: YamlCode = YamlCode(YAML_EXAMPLE)) -> None:  # noqa: B008
         try:
             self.process_yaml(str(parameters))
         except YAMLError as error:
-            raise ValueError(f"Error in parameter input: {str(error)}") from error
+            raise ValueError(f"Error in parameter input: {error!s}") from error
 
         # Input and output ports
         self.input_ports = FixedNumberOfInputs([])
@@ -92,7 +86,7 @@ class ParametersPlugin(WorkflowPlugin):
         """Generate entities from the yaml string."""
         parameters = safe_load(yaml_string)
         if not isinstance(parameters, dict):
-            raise ValueError("We need at least one line 'key: value' here.")
+            raise TypeError("We need at least one line 'key: value' here.")
         value_counter = 0
         values = []
         paths = []
@@ -105,16 +99,12 @@ class ParametersPlugin(WorkflowPlugin):
         entities = [Entity(uri=type_uri, values=values)]
 
         self.schema = EntitySchema(type_uri=type_uri, paths=paths)
-        self.entities = Entities(
-            entities=entities,
-            schema=self.schema
-        )
+        self.entities = Entities(entities=entities, schema=self.schema)
         self.total_params = value_counter
 
-    def execute(
-        self, inputs: Sequence[Entities], context: ExecutionContext
-    ) -> Entities:
-
+    def execute(self, inputs: Sequence[Entities], context: ExecutionContext) -> Entities:
+        """Execute the workflow."""
+        _ = inputs
         context.report.update(
             ExecutionReport(
                 entity_count=self.total_params,
