@@ -1,10 +1,15 @@
 """Plugin tests."""
 
+import os
+
 import pytest
+from cmem_plugin_base.testing import TestExecutionContext
 
 from cmem_plugin_parameters import ParametersPlugin
 
-from .utils import TestExecutionContext, needs_cmem
+needs_cmem = pytest.mark.skipif(
+    os.environ.get("CMEM_BASE_URI", "") == "", reason="Needs CMEM configuration"
+)
 
 
 @needs_cmem

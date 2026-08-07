@@ -1,8 +1,8 @@
 # Changes here will be overwritten by Copier
-_commit: v7.3.0-24-g169e035
+_commit: v8.5.0-3-g60fcc85
 _src_path: gh:eccenca/cmem-plugin-template
-author_mail: thomas.wilmering@eccenca.com
-author_name: Thomas Wilmering
+author_mail: cmempy-developer@eccenca.com
+author_name: eccenca GmbH
 github_page: https://github.com/eccenca/cmem-plugin-parameters/
 project_description: Set or overwrite parameters of a task.
 project_slug: parameters
